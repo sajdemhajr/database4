@@ -1,18 +1,16 @@
 import mysql.connector
-class DB:
-    def __init__(self, user, password, host, datbase):
-        self.user = user
-        self.password = password
-        self.host = host
-        self.database = datbase
-        self.connect = None
-
-    def connection(self):
-        self.connect = mysql.connector.connect(
-            user=self.user,
-            password=self.password,
-            host = self.host,
-            database = self.database,
-        )
-  if __name__ == "__main__":
-    obj1 = DB("root","pass","localhost","DBblog")
+mydb = mysql.connector.connect(
+    host = "localhost",
+    user = "root",
+    password = "S@jedeh_1382"
+)
+mycursor = mydb.cursor()
+try:
+    mycursor.execute()
+except Exception as e:
+    print(e)
+sj = "CREATE DATABASE db_class"
+try:
+    mycursor.execute(sj)
+except Exception as e :
+    print(e)
