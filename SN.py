@@ -1,8 +1,10 @@
 import mysql.connector
+import csv
+
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "S@jedeh_1382"
+    password = "N@srin_1382"
 )
 mycursor = mydb.cursor()
 try:
@@ -21,7 +23,7 @@ except Exception as e :
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="S@jedeh_1382",
+    password="N@srin_1382",
     database = "db_class"
 )
 mycursor = mydb.cursor()
@@ -89,3 +91,76 @@ try:
     mycursor.execute(query)
 except Exception as e:
     print(e)
+
+
+#INSERT_TO_PHOTOGRAPHERS
+def insert_photographer(code, name, email, bio):
+    try:
+        mycursor.execute(
+            "INSERT INTO photographers (code, name, email, bio) VALUES (%s, %s, %s, %s) "
+            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email), bio=VALUES(bio)",
+            (code, name, email, bio)
+        )
+        print(f"Inserted/Updated: {code}, {name}, {email}, {bio}")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
+#READ_FROM_CSV_FILE
+try:
+    with open('images.csv', 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            insert_photographer(
+                row['photographer_code'],
+                row['photographer_name'],
+                row['photographer_email'],
+                None  
+            )
+except FileNotFoundError as e:
+    print(f"File not found: {e}")
+except Exception as e:
+    print(f"Error reading CSV file: {e}")
+
+try:
+    mydb.commit()
+    print("Changes committed successfully.")
+except mysql.connector.Error as err:
+    print(f"Error committing changes: {err}")
+
+
+
+#INSERT_TO_WRITER
+def insert_writer(code, name, email, bio):
+    try:
+        mycursor.execute(
+            "INSERT INTO writers (code, name, email, bio) VALUES (%s, %s, %s, %s) "
+            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email), bio=VALUES(bio)",
+            (code, name, email, bio)
+        )
+    except mysql.connector.Error as err:
+        print(err)
+
+
+#READ_FROM_CSV_FILE
+try:
+    with open('articles.csv', 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            insert_writer(
+                row['writer_code'],
+                row['writer_name'],
+                row['writer_email'],
+                None 
+            )
+except Exception as e:
+    print(e)
+
+try:
+    mydb.commit()
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
+
+#CLOSE_DATABASE
+mycursor.close()
+mydb.close()
