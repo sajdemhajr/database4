@@ -4,7 +4,7 @@ import csv
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "N@srin_1382"
+    password = "S@jedeh_1382"
 )
 mycursor = mydb.cursor()
 try:
@@ -23,17 +23,16 @@ except Exception as e :
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="N@srin_1382",
+    password="S@jedeh_1382",
     database = "db_class"
 )
 mycursor = mydb.cursor()
 
-#CREATE_TABLE_PHOTOGRAFERS
-query = ("""CREATE TABLE photographers (
+#CREATE_TABLE_USERS
+query = ("""CREATE TABLE users (
     code VARCHAR(50) ,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) ,
-    bio TEXT,
     PRIMARY KEY(code)
 )
 """)
@@ -53,23 +52,9 @@ query = """CREATE TABLE Images (
     photographer_code VARCHAR(50) NOT NULL,
     photographer_name VARCHAR(100),
     photographer_email VARCHAR(100),
-    FOREIGN KEY (photographer_code) REFERENCES photographers(code)
+    FOREIGN KEY (photographer_code) REFERENCES users(code)
 )
 """
-try:
-    mycursor.execute(query)
-except Exception as e:
-    print(e)
-
-#CREATE_TABLE_WRITERS
-query = ("""CREATE TABLE Writers (
-    code VARCHAR(50) ,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) ,
-    bio TEXT,
-    PRIMARY KEY(code)
-)
-""")
 try:
     mycursor.execute(query)
 except Exception as e:
@@ -84,7 +69,7 @@ query = ("""CREATE TABLE Articles (
     writer_code VARCHAR(50) NOT NULL,
     writer_name VARCHAR(100),
     writer_email VARCHAR(100),
-    FOREIGN KEY (writer_code) REFERENCES Writers(code)
+    FOREIGN KEY (writer_code) REFERENCES users(code)
 )
 """)
 try:
@@ -93,17 +78,17 @@ except Exception as e:
     print(e)
 
 
-#INSERT_TO_PHOTOGRAPHERS
-def insert_photographer(code, name, email, bio):
+#INSERT_TO_users
+def insert_photographer(code, name, email):
     try:
         mycursor.execute(
-            "INSERT INTO photographers (code, name, email, bio) VALUES (%s, %s, %s, %s) "
-            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email), bio=VALUES(bio)",
-            (code, name, email, bio)
+            "INSERT INTO users (code, name, email) VALUES (%s, %s, %s) "
+            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email)",
+            (code, name, email)
         )
-        print(f"Inserted/Updated: {code}, {name}, {email}, {bio}")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        #print(f"Inserted/Updated: {code}, {name}, {email}")
+    except Exception as e:
+        print(e)
 
 
 #READ_FROM_CSV_FILE
@@ -114,32 +99,25 @@ try:
             insert_photographer(
                 row['photographer_code'],
                 row['photographer_name'],
-                row['photographer_email'],
-                None  
+                row['photographer_email'], 
             )
-except FileNotFoundError as e:
-    print(f"File not found: {e}")
 except Exception as e:
-    print(f"Error reading CSV file: {e}")
-
-try:
-    mydb.commit()
-    print("Changes committed successfully.")
-except mysql.connector.Error as err:
-    print(f"Error committing changes: {err}")
+    print(e)
+else:
+      mydb.commit()
 
 
 
 #INSERT_TO_WRITER
-def insert_writer(code, name, email, bio):
+def insert_writer(code, name, email):
     try:
         mycursor.execute(
-            "INSERT INTO writers (code, name, email, bio) VALUES (%s, %s, %s, %s) "
-            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email), bio=VALUES(bio)",
-            (code, name, email, bio)
+            "INSERT INTO users (code, name, email) VALUES (%s, %s, %s) "
+            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email)",
+            (code, name, email)
         )
-    except mysql.connector.Error as err:
-        print(err)
+    except Exception as e:
+        print(e)
 
 
 #READ_FROM_CSV_FILE
@@ -150,16 +128,15 @@ try:
             insert_writer(
                 row['writer_code'],
                 row['writer_name'],
-                row['writer_email'],
-                None 
+                row['writer_email']
             )
 except Exception as e:
     print(e)
 
 try:
     mydb.commit()
-except mysql.connector.Error as err:
-    print(f"Error: {err}")
+except Exception as e:
+    print(e)
 
 #CLOSE_DATABASE
 mycursor.close()
