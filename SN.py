@@ -4,7 +4,7 @@ import csv
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "S@jedeh_1382"
+    password = "N@srin_1382"
 )
 mycursor = mydb.cursor()
 try:
@@ -23,7 +23,7 @@ except Exception as e :
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="S@jedeh_1382",
+    password="N@srin_1382",
     database = "db_class"
 )
 mycursor = mydb.cursor()
@@ -80,34 +80,46 @@ except Exception as e:
 #INSERT_TO_users
 def insert_users(code, name, email):
     try:
-        mycursor.execute(
-            "INSERT INTO users (code, name, email) VALUES (%s, %s, %s) "
-            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email)",
-            (code, name, email)
-        )
-        #print(f"Inserted/Updated: {code}, {name}, {email}")
+        mycursor.execute("SELECT COUNT(*) FROM users WHERE code = %s", (code,))
+        result = mycursor.fetchone()
+        if result[0] == 0:
+            mycursor.execute(
+                "INSERT INTO users (code, name, email) VALUES (%s, %s, %s)",
+                (code, name, email)
+            )
     except Exception as e:
         print(e)
+
 
 #INSERT_TO_IMAGES
-def insert_images(image_path,title,tags,description,category,photographer_code,photographer_name,photographer_email):
-    query = """INSERT INTO images (image_path,title,tags,description,category,photographer_code,photographer_name,photographer_email) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s) """
-    data = (image_path,title,tags,description,category,photographer_code,photographer_name,photographer_email)
+def insert_images(image_path, title, tags, description, category, photographer_code, photographer_name, photographer_email):
     try:
-        mycursor.execute(query, data)
+        mycursor.execute("SELECT COUNT(*) FROM images WHERE image_path = %s", (image_path,))
+        result = mycursor.fetchone()
+        if result[0] == 0:
+            mycursor.execute(
+                "INSERT INTO images (image_path, title, tags, description, category, photographer_code, photographer_name, photographer_email) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                (image_path, title, tags, description, category, photographer_code, photographer_name, photographer_email)
+            )
     except Exception as e:
         print(e)
 
+
 #INSERT_TO_ARTCLES
-def insert_articles(content,keywords,title,category,writer_code,writer_name,writer_email):
-    query = """INSERT INTO articles (content,keywords,title,category,writer_code,writer_name,writer_email) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s) """
-    data = (content,keywords,title,category,writer_code,writer_name,writer_email)
+def insert_articles(content, keywords, title, category, writer_code, writer_name, writer_email):
     try:
-        mycursor.execute(query, data)
+        mycursor.execute("SELECT COUNT(*) FROM articles WHERE content = %s", (content,))
+        result = mycursor.fetchone()
+        if result[0] == 0:
+            mycursor.execute(
+                "INSERT INTO articles (content, keywords, title, category, writer_code, writer_name, writer_email) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (content, keywords, title, category, writer_code, writer_name, writer_email)
+            )
     except Exception as e:
         print(e)
+
 
 #READ_FROM_ARTICLES_CSV_FILE
 try:
