@@ -79,7 +79,7 @@ except Exception as e:
 
 
 #INSERT_TO_users
-def insert_photographer(code, name, email):
+def insert_users(code, name, email):
     try:
         mycursor.execute(
             "INSERT INTO users (code, name, email) VALUES (%s, %s, %s) "
@@ -91,12 +91,12 @@ def insert_photographer(code, name, email):
         print(e)
 
 
-#READ_FROM_CSV_FILE
+#READ_FROM_IMAGE_CSV_FILE
 try:
     with open('images.csv', 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            insert_photographer(
+            insert_users(
                 row['photographer_code'],
                 row['photographer_name'],
                 row['photographer_email'], 
@@ -106,37 +106,20 @@ except Exception as e:
 else:
       mydb.commit()
 
-
-
-#INSERT_TO_WRITER
-def insert_writer(code, name, email):
-    try:
-        mycursor.execute(
-            "INSERT INTO users (code, name, email) VALUES (%s, %s, %s) "
-            "ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email)",
-            (code, name, email)
-        )
-    except Exception as e:
-        print(e)
-
-
-#READ_FROM_CSV_FILE
+#READ_FROM_ARTICLES_CSV_FILE
 try:
     with open('articles.csv', 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            insert_writer(
+            insert_users(
                 row['writer_code'],
                 row['writer_name'],
                 row['writer_email']
             )
 except Exception as e:
     print(e)
-
-try:
+else:
     mydb.commit()
-except Exception as e:
-    print(e)
 
 #CLOSE_DATABASE
 mycursor.close()
